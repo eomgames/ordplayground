@@ -3,14 +3,14 @@ This was heavily based on: https://github.com/vnprc/dockord
 ## Build and start the docker cloud
 
 ```
-docker compose build --no-cache
-docker compose up bitcoind -d
+docker-compose build --no-cache
+docker-compose up -d bitcoind
 ```
 
 ### I wait a min for bitcoind to start up then run
 
 ```
-docker compose up ord -d
+docker-compose up -d ord
 ```
 
 This will start ord service (container), generate some address, some btc, then inscribe `/ordinals/keep_going.png` and then mine it.
