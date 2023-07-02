@@ -1,0 +1,38 @@
+version: "3"
+
+volumes:
+  bitcoin:
+
+services:
+  bitcoind:
+    image: kylemanna/bitcoind:latest
+    ports:
+      - "18333:18333"
+    volumes:
+      - ./bitcoin:/bitcoin/.bitcoin
+
+  ord:
+    build:
+      context: ./ordinals
+    volumes:
+      - ./bitcoin:/bitcoin/.bitcoin
+      - ./ordinals/init.sh:/usr/local/bin/init.sh
+      - ./ordinals/keep_going.png:/ordinals/keep_going.png
+      - ./ordinals/projects:/ordinals/projects
+    depends_on:
+      - bitcoind
+    command: init.sh
+    ports:
+      - "0.0.0.0:8080:8080"
+    tty: true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/bin/sh",
+          "-c",
+          "bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie getblockcount",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
