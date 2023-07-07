@@ -29,6 +29,7 @@ services:
       - ./bitcoin:/bitcoin/.bitcoin
       - ./ordinals/init.sh:/usr/local/bin/init.sh
       - ./ordinals/keep_going.png:/ordinals/keep_going.png
+      - ./ordinals/keep_going.svg:/ordinals/keep_going.svg
       - ./ordinals/projects:/ordinals/projects
     depends_on:
       - bitcoind
