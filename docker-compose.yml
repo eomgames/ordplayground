@@ -18,8 +18,8 @@ services:
           "-c",
           "bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie getblockcount",
         ]
-      interval: 30s
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   ord:
@@ -32,8 +32,16 @@ services:
       - ./ordinals/keep_going.svg:/ordinals/keep_going.svg
       - ./ordinals/projects:/ordinals/projects
     depends_on:
-      - bitcoind
+      bitcoind:
+        condition: service_healthy
     command: init.sh
     ports:
       - "0.0.0.0:8080:8080"
     tty: true
+    healthcheck:
+      test:
+        ["CMD", "/bin/sh", "-c", "curl --fail http://localhost:8080 || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

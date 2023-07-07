@@ -4,7 +4,7 @@ This was heavily based on: https://github.com/vnprc/dockord
 
 ```
 docker-compose build --no-cache
-docker-compose up
+docker-compose up -d
 ```
 
 This will start the bitcoind and ord service containers. Then using `init.sh` in the ord container, it will generate some addresses, some btc, then inscribe `/ordinals/keep_going.png` and then mine it.
@@ -34,7 +34,7 @@ ADDRESS=$(ord wallet receive 2>/dev/null | grep -o -E "\"address\": \"[^\"]+\"" 
 bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 101 $ADDRESS
 ```
 
-### 3. Create your ord indxe
+### 3. Create your ord index
 
 ```
 ord index run
