@@ -4,78 +4,52 @@ This was heavily based on: https://github.com/vnprc/dockord
 
 ```
 docker-compose build --no-cache
-docker-compose up -d bitcoind
+docker-compose up
 ```
 
-### I wait a min for bitcoind to start up then run
-
-```
-docker-compose up -d ord
-```
-
-This will start ord service (container), generate some address, some btc, then inscribe `/ordinals/keep_going.png` and then mine it.
+This will start the bitcoind and ord service containers. Then using `init.sh` in the ord container, it will generate some addresses, some btc, then inscribe `/ordinals/keep_going.png` and then mine it.
 Since you are on regtest you need to mine the transactions yourself.
 
 ## Open the ORD explorer
 
 http://localhost:8080
 
-## Inscribing
+## The Inscribing Process
 
-This process uses a mount in `/ordinals/projects`. You would put your files inside of it, use `docker-compose run ord bash` to start a container to do the inscribing process.
+This process uses a mount in `./ordinals/projects`. You would put your files inside of it, use `docker-compose run ord bash` to start a container to do the inscribing process.
 
-### start an individual docker insatnce
+### 1. Start an individual docker instance
 
 ```
 docker-compose run ord bash
 ```
 
-### hop into a running docker container bash shell
+### 2. Create a wallet & get it some sweet BTC
 
-```
-docker exec -it dockord-ord-1 bash
-```
-
-### 1. create a regtest ord wallet
+This will create a wallet then generate 101 blocks: Further reading for 101 block: https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line/blob/8598756ae138608b21082d210f4f638a4507c67d/A3_0_Using_Bitcoin_Regtest.md#generate-blocks
 
 ```
 ord wallet create
-```
-
-### Optional - do a bitcoind health check
-
-```
-bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie getblockcount
-```
-
-### 2. Generate 101 blocks to address, you'll need this
-
-```
-bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 101 bcrt1paw2gyzatqtccenymqfxfrxx4fn235v3sfxvs7sqe7dlcm0raqwwsp0ul80
-```
-
-### 3. Create a wallet & get it some sweet BTC
-
-```
-ord wallet create && get a receive address
 ADDRESS=$(ord wallet receive 2>/dev/null | grep -o -E "\"address\": \"[^\"]+\"" | sed -E "s/\"address\": \"(.*)\"/\1/")
 bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 101 $ADDRESS
 ```
 
-### 4. Create your ord indxe
+### 3. Create your ord indxe
 
 ```
 ord index run
 ```
 
-### 5. Now inscribe file
+### 4. Now inscribe file
 
 ```
-/ordinals/ord -r --cookie-file /bitcoin/.bitcoin/regtest/.cookie --rpc-url http://bitcoind:8332 wallet inscribe --fee-rate 1 /ordinals/keep_going.png
+ord wallet inscribe --fee-rate 1 /ordinals/keep_going.png
 ```
 
-### 6. Mine that transaction (have to b/c you on REGTEST)
+### 5. Mine that transaction (have to b/c you on REGTEST)
 
 ```
 bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 1 $ADDRESS
 ```
+
+Now you should be able to look in your local explorer at http://localhost:8080 and see the inscription.
