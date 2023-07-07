@@ -10,6 +10,17 @@ services:
       - "18333:18333"
     volumes:
       - ./bitcoin:/bitcoin/.bitcoin
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/bin/sh",
+          "-c",
+          "bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie getblockcount",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   ord:
     build:
@@ -25,14 +36,3 @@ services:
     ports:
       - "0.0.0.0:8080:8080"
     tty: true
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "/bin/sh",
-          "-c",
-          "bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie getblockcount",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 5

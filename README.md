@@ -36,20 +36,46 @@ docker-compose run ord bash
 docker exec -it dockord-ord-1 bash
 ```
 
-### create a regtest ord wallet
+### 1. create a regtest ord wallet
 
 ```
-ord -r --cookie-file /bitcoin/.bitcoin/regtest/.cookie --rpc-url http://bitcoind:8332/ wallet create
+ord wallet create
 ```
 
-### bitcoind health check
+### Optional - do a bitcoind health check
 
 ```
 bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie getblockcount
 ```
 
-### generate 101 blocks to address
+### 2. Generate 101 blocks to address, you'll need this
 
 ```
 bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 101 bcrt1paw2gyzatqtccenymqfxfrxx4fn235v3sfxvs7sqe7dlcm0raqwwsp0ul80
+```
+
+### 3. Create a wallet & get it some sweet BTC
+
+```
+ord wallet create && get a receive address
+ADDRESS=$(ord wallet receive 2>/dev/null | grep -o -E "\"address\": \"[^\"]+\"" | sed -E "s/\"address\": \"(.*)\"/\1/")
+bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 101 $ADDRESS
+```
+
+### 4. Create your ord indxe
+
+```
+ord index run
+```
+
+### 5. Now inscribe file
+
+```
+/ordinals/ord -r --cookie-file /bitcoin/.bitcoin/regtest/.cookie --rpc-url http://bitcoind:8332 wallet inscribe --fee-rate 1 /ordinals/keep_going.png
+```
+
+### 6. Mine that transaction (have to b/c you on REGTEST)
+
+```
+bitcoin-cli --rpcconnect=bitcoind --rpcport=8332 --rpccookiefile=/bitcoin/.bitcoin/regtest/.cookie generatetoaddress 1 $ADDRESS
 ```
