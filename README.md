@@ -1,5 +1,9 @@
 This was heavily based on: https://github.com/vnprc/dockord
 
+## Youtube demo
+
+https://www.youtube.com/watch?v=cVc8cL_JrnI
+
 ## Build and start the docker cloud
 
 ```
