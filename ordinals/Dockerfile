@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc
 
-RUN apk add --no-cache curl bash
+RUN apk add --no-cache curl bash go git
 
 SHELL ["/bin/bash", "-c"]
 
@@ -14,7 +14,7 @@ RUN tar -zxvf ord.tar.gz
 
 RUN chmod +x /ordinals/ord
 RUN ls -la
-ENV RUST_LOG=debug
+ENV RUST_LOG=error
 # ENV PATH="/ordinals:$PATH"
 
 ADD https://bitcoincore.org/bin/bitcoin-core-24.0.1/bitcoin-24.0.1-x86_64-linux-gnu.tar.gz /bitcoin/bitcoin.tar.gz
